@@ -1,0 +1,4 @@
+/flasktools-env
+/flasktools/static/files/*.log
+/flasktools/__pycache__
+
