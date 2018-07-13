@@ -1,5 +1,5 @@
-import os, re, pygeoip
-from flask import render_template, flash, request
+import os, re, pygeoip, secrets
+from flask import render_template, flash, request, redirect, url_for
 from flasktools import app
 from flasktools.forms import ImportLogForm
 
@@ -28,19 +28,6 @@ def list_of_ips(file_path):
             regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})', line)
             if regex is not None:
                 ips.extend(regex)
-        return ips
-
-def try_log(file):
-    ips = []
-
-    with open(file, "r") as f:
-        f.read()
-        flash(f, 'warning')
-        for text in f:
-            regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})', text)
-            if regex is not None:
-                ips.extend(regex)
-        flash('klar','success')
         return ips
 
 def add_location(ips):
@@ -73,11 +60,15 @@ def add_location(ips):
 def home():
     form = ImportLogForm()
     if request.method == 'POST':
-        ips = save_log('file')
-        form.uploaded.data = 'ips'
-        if ips:
-            new_dict = add_location(ips)
-            form.uploaded.data = new_dict
+        try:
+            ips = save_log('file')
+            form.uploaded.data = 'ips'
+            if ips:
+                new_dict = add_location(ips)
+                form.uploaded.data = new_dict
+        except:
+            return redirect(url_for('home'))
+
     return render_template('home.html', form=form)
 
 @app.route("/about")
