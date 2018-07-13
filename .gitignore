@@ -1,6 +1,7 @@
 /flasktools-env
 /flasktools/static/files/*.log
 /flasktools/__pycache__
+.idea
 
 # Exceptions
 !/flasktools/static/files/.gitkeep

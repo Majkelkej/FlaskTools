@@ -1,10 +1,7 @@
-import os, sys, logging, secrets, re, pygeoip, webbrowser
-from flask import render_template, url_for, flash, redirect, request, abort
+import os, re, pygeoip
+from flask import render_template, flash, request
 from flasktools import app
 from flasktools.forms import ImportLogForm
-from flask_table import Table, Col
-from werkzeug import secure_filename
-
 
 def save_log(file):
         f = request.files['file']
@@ -24,13 +21,9 @@ def save_log(file):
             return ips
 
 def list_of_ips(file_path):
-    #flash(file_path, 'success')
     ips = []
-    #flash(ips, 'success')
-    #return ips
     with open(file_path, "r") as logfile:
         for line in logfile.readlines():
-            #flash(line, 'success')
             line = line.rstrip()
             regex = re.findall(r'(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})\.(?:[\d]{1,3})', line)
             if regex is not None:
@@ -80,21 +73,11 @@ def add_location(ips):
 def home():
     form = ImportLogForm()
     if request.method == 'POST':
-#    if form.validate_on_submit():
-        #file = request.files.get('file')
         ips = save_log('file')
         form.uploaded.data = 'ips'
-
-        #flash('returned', 'success')
-#            log_file = try_log(file)
         if ips:
-           # flash('tillbaka i route', 'success')
             new_dict = add_location(ips)
             form.uploaded.data = new_dict
-#                return redirect(url_for('home'))
-#        except:
-#            return redirect(url_for('home'))
-#    form.uploaded.data = 'TEXT'
     return render_template('home.html', form=form)
 
 @app.route("/about")
