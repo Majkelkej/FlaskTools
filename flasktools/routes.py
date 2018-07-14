@@ -50,10 +50,17 @@ def add_location(ips):
             ips_dict[country][0] += 1
     new_dict = []
     for key, value in ips_dict.items():
-        new_dict.append({'country':key, 'count':value[0], 'ips':value[1:]})
+        new_dict.append({'Country':key, 'Counter':value[0], 'List of Ips':value[1:]})
     return new_dict
 
-
+def nicer_list(new_dict):
+    new_string = ''
+    for obj in new_dict:
+        for key, value in obj.items():
+            new_string += str("{}: {}".format(key, value))
+            new_string += '\n'
+        new_string += '\n'
+    return new_string
 
 @app.route("/", methods=['GET', 'POST'])
 @app.route("/home", methods=['GET', 'POST'])
@@ -65,7 +72,8 @@ def home():
             form.uploaded.data = 'ips'
             if ips:
                 new_dict = add_location(ips)
-                form.uploaded.data = new_dict
+                new_string = nicer_list(new_dict)
+                form.uploaded.data = new_string
         except:
             return redirect(url_for('home'))
 
